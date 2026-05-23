@@ -1,7 +1,5 @@
 biosteam>=2.41.0
 thermosteam>=0.41.0
-Streamlit
-google-generativeai
 pandas
-Streamlit>=1.31.0
+streamlit>=1.31.0
 google-generativeai
