@@ -1,10 +1,16 @@
 import streamlit as st
 import pandas as pd
 import numpy as np
-import google.generativeai as genai
 import biosteam as bst
 from thermosteam import Chemicals, Stream, settings
 import json
+
+# Manejo seguro de la importación de Google Generative AI
+try:
+    import google.generativeai as genai
+    HAS_GEMINI = True
+except ModuleNotFoundError:
+    HAS_GEMINI = False
 
 # =================================================================
 # CONFIGURACIÓN Y ESTILOS
@@ -163,9 +169,9 @@ def render_interactive_diagram(datos_json):
                     <b style="color:#3b82f6; font-size:14px;">${{id}}</b>
                 </div>
                 <div style="line-height:1.6;">
-                    🌡️ <b>Temp:</b> ${{data.T}}<br>
-                    🌀 <b>Pres:</b> ${{data.P}}<br>
-                    ⚖️ <b>Flujo:</b> ${{data.F}}
+                    Temp: ${{data.T}}<br>
+                    Pres: ${{data.P}}<br>
+                    Flujo: ${{data.F}}
                 </div>
             `;
         }}
@@ -225,7 +231,9 @@ if simular:
 
     with tab3:
         if ia_tutor:
-            if "GEMINI_API_KEY" in st.secrets:
+            if not HAS_GEMINI:
+                st.error("Error: El módulo 'google-generativeai' no está instalado en el servidor. Por favor, añádelo a tu archivo 'requirements.txt'.")
+            elif "GEMINI_API_KEY" in st.secrets:
                 genai.configure(api_key=st.secrets["GEMINI_API_KEY"])
                 model = genai.GenerativeModel('gemini-2.5-pro')
                 pregunta = st.text_input("Pregunta al asistente sobre el balance energético o de masa:")
